@@ -1,0 +1,7 @@
+{
+  "name": "com.toothbrush.imsrc",
+  "description": "Image sourcer host client",
+  "path": "D:\\CodeProjects\\Chromeext\\ImageSourcer\\ImageSourcerHost\\build\\imsrc.exe",
+  "type": "stdio",
+  "allowed_origins": ["chrome-extension://jkjojfpnfhofdkhmfcbgbpdjoonoclmb/"]
+}

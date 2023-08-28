@@ -1,0 +1,11 @@
+{
+  "name": "Image Sourcer",
+  "description": "Add sources to image downloads",
+  "version": "1.0",
+  "manifest_version": 3,
+  "permissions": ["downloads", "nativeMessaging"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": { "default_title": "IMGSource" }
+}
