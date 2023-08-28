@@ -30,7 +30,10 @@ The host directory currently has 2 batch files for building as well, this will j
 Section for notes during initial development
 
 ### Some preliminary links
+- [Setup CMake](https://preshing.com/20170511/how-to-build-a-cmake-based-project/)
+- [Sample CMakeLists.txt](https://cliutils.gitlab.io/modern-cmake/chapters/basics/example.html)
 - [https://stackoverflow.com/questions/30880709/c-sharp-native-host-with-chrome-native-messaging](https://stackoverflow.com/questions/30880709/c-sharp-native-host-with-chrome-native-messaging)
 - [https://stackoverflow.com/questions/34279201/how-to-get-chrome-native-messaging-to-listen-to-application](https://stackoverflow.com/questions/34279201/how-to-get-chrome-native-messaging-to-listen-to-application)
-- [https://developer.chrome.com/docs/extensions/mv3/nativeMessaging/#native-messaging-host](https://developer.chrome.com/docs/extensions/mv3/nativeMessaging/#native-messaging-host)
+- [Chrome native messaging host setup](https://developer.chrome.com/docs/extensions/mv3/nativeMessaging/#native-messaging-host)
+- [Chrome downloads api reference](https://developer.chrome.com/docs/extensions/reference/downloads/)
 - [https://github.com/XFG16/YouTubeDiscordPresence/tree/main/Extension](https://github.com/XFG16/YouTubeDiscordPresence/tree/main/Extension)

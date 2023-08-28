@@ -1,5 +1,6 @@
 # From https://github.com/clangd/clangd/issues/537#issuecomment-1479544442
 # This dotfile is used to configure clangd lsp (for neovim in my case)
+# More info from https://clangd.llvm.org/config
 CompileFlags:
   Add:
     - --target=x86_64-w64-windows-gnu
