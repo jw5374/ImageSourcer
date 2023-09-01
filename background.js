@@ -21,31 +21,21 @@ chrome.downloads.onCreated.addListener((dlItem) => {
 	if(dlItem.state !== "in_progress" || !acceptedMimes.has(dlItem.mime)) {
 		return
 	}
-	try {
-		console.log("here", dlItem.finalUrl, dlItem.url, dlItem.mime)
-		port.postMessage({text: dlItem.url});
-// 		chrome.runtime.sendNativeMessage(
-// 		  'com.toothbrush.imsrc',
-// 		  {text: dlItem.url},
-// 		  function (response) {
-// 			console.log(response)
-// 			console.log('Received ' + response);
-// 		  }
-// 		);
-	} catch {
-		console.log(chrome.runtime.lastError)
-	}
+	console.log("DLItem Created:", dlItem.finalUrl, dlItem.url, dlItem.mime)
 })
 
 chrome.downloads.onChanged.addListener((dlDelta) => {
 	chrome.downloads.search({id: dlDelta.id}, (dlItems) => {
-		console.log(dlItems)
 		let dlItem = dlItems[0]
-		if(!acceptedMimes.has(dlItem.mime)) {
+		if(!dlItem.exists || dlItem.state !== "complete" || !acceptedMimes.has(dlItem.mime)) {
 			return
 		}
-		if(dlItem.state === "complete") {
-			console.log("completed DL", dlItem.filename)
-		}
+		console.log(dlItems)
+		console.log("Completed DL", dlItem.filename)
+		port.postMessage({
+			hostUrl: dlItem.referrer,
+			imgUrl: dlItem.url,
+			imgFilepath: dlItem.filename
+		});
 	})
 })
