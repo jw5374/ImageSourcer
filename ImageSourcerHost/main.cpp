@@ -10,7 +10,18 @@
 #include <stdint.h>
 #include <string>
 
+/**
+ * This was a pain and I'd probably need some help understanding why the compiled executable needs the compiler in the system path to successfully run
+ * The library apparently brings in something else from the standard library even though it's just a single header file
+ * If the compiler is not in system path, program will exit with code 0xc0000139 which apparently means compiled file is misconfigured/missing dll's??
+ * Working around by simply compiling a static binary
+ * Only other result for this problem: https://stackoverflow.com/questions/71632731/error-when-trying-to-run-code-using-nlohmann-json-library-in-visual-studio-code
+ **/
+#include "nlohmann/json.hpp" // from https://github.com/nlohmann/json
+
 using namespace std;
+
+using json = nlohmann::json;
 
 int main() {
 	_setmode(_fileno(stdin),_O_BINARY); // from bkdc answer https://stackoverflow.com/questions/20220668/communication-between-native-app-and-chrome-extension
@@ -46,6 +57,15 @@ int main() {
 			char* msg = new char[length+1];
 			cin.read(msg, length);
 			msg[length] = '\0';
+
+			// parsing json
+			// more docs at: https://json.nlohmann.me/api/basic_json/
+			// or visit the repository README
+			json msgJson = json::parse(msg);
+
+			// Chrome extension background.js has the json format in message
+			logs << setw(4) << msgJson << endl; // for formatted json
+			logs << msgJson["imgUrl"] << endl;
 
 			// Instantiate message and length
 			string message;
