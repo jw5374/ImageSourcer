@@ -1,90 +1,80 @@
 // Taken from https://stackoverflow.com/questions/26582584/chrome-native-host-in-c-cannot-communicate-with-chrome
 // Probably needs cleanup or something
 
+#include <exception>
 #include <iostream>
+#include <io.h>
+#include <fcntl.h>
 #include <fstream>
+#include <memory>
+#include <stdint.h>
 #include <string>
 
 using namespace std;
 
 int main() {
-    string oneLine = "";
+	_setmode(_fileno(stdin),_O_BINARY); // from bkdc answer https://stackoverflow.com/questions/20220668/communication-between-native-app-and-chrome-extension
 
 	ofstream logs;
 	logs.open("logs.txt", ios::app);
 	bool terminate = false;
+	logs << "Starting... \n" << flush;
 
-    while (1){
-        unsigned int length = 0;
-
-        //read the first four bytes (=> Length)
-        /*for (int i = 0; i < 4; i++)
-        {
-            int read_char = getchar();
-            length += read_char * (int) pow(2.0, i*8);
-            string s = to_string((long long)read_char) + "\n";
-            fwrite(s.c_str(), sizeof(char), s.size(), f);
-            fflush(f);
-        }*/
-
-        //Neat way!
-        for (int i = 0; i < 4; i++)
-        {
-            unsigned int read_char = getchar();
-			if(read_char == -1) { // chrome sends signal -1 when closed, so we check to close the host process
-				logs << "closed\n" << flush;
-				terminate = true;
+	try {
+		while(1) {
+			if(cin.peek() == -1) {
+				logs << "Closing... " << endl;
 				break;
 			}
-            length = length | (read_char << i*8);
-        }
 
-		if(terminate) {
-			break;
+			//read the first four bytes (=> Length)
+			/*for (int i = 0; i < 4; i++)
+			{
+				int read_char = getchar();
+				length += read_char * (int) pow(2.0, i*8);
+				string s = to_string((long long)read_char) + "\n";
+				fwrite(s.c_str(), sizeof(char), s.size(), f);
+				fflush(f);
+			}*/
+
+			//Neat way!
+			uint32_t length;
+			cin.read(reinterpret_cast<char*>(&length), 4); // we can read specific number of bytes from istream without writing loop
+			logs << length << endl;
+
+			// read the json-message (we can do something with this msg now)
+			char* msg = new char[length+1];
+			cin.read(msg, length);
+			msg[length] = '\0';
+
+			// Instantiate message and length
+			string message;
+			uint32_t len;
+
+			// Now we can output our message
+			if (strcmp(msg, "{\"text\":\"#STOP#\"}") == 0) {
+				message = "{\"text\":\"EXITING...\"}";
+				len = message.length();
+				cout.write(reinterpret_cast<char*>(&len), 4); 
+				cout.write(reinterpret_cast<char*>(&message), len); 
+				cout.flush(); // stdout for chrome response
+
+				logs << message << endl;
+				break;
+			}
+
+			// return stdin message
+			// this would have encoded the 4byte length information for response: logs << char(len>>0) << char(len>>8) << char(len>>16) << char(len>>24);
+			len = length;
+			cout.write(reinterpret_cast<char*>(&len), 4); 
+			cout.write(msg, len); 
+			cout.flush(); // stdout for chrome response
+
+			logs << msg << endl;
 		}
-
-        //read the json-message
-        string msg = "";
-        for (int i = 0; i < length; i++)
-        {
-            msg += getchar();
-        }
-
-        string message = "{\"text\":\"This is a response message\"}";
-        // Collect the length of the message
-        unsigned int len = message.length();
-
-        // Now we can output our message
-        if (msg == "{\"text\":\"#STOP#\"}"){
-            message = "{\"text\":\"EXITING...\"}";
-            len = message.length();
-
-            logs   << char(len>>0)
-                        << char(len>>8)
-                        << char(len>>16)
-                        << char(len>>24);
-
-            logs << message;
-            break;
-        }
-        
-        // return stdin message
-        len = length;
-        logs   << char(len>>0)
-                    << char(len>>8)
-                    << char(len>>16)
-                    << char(len>>24);
-
-        logs << msg + "\n" << flush;
-
-        // return response message
-        // cout    << char(len>>0)
-        //          << char(len>>8)
-        //          << char(len>>16)
-        //          << char(len>>24);
-        //  
-        // cout << message << flush;
-    }
+	} catch (exception &e) {
+		logs << "exception: " + string(e.what()) << endl;
+	}
     logs.close();
     return 0;
 }
