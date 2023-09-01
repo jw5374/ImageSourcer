@@ -9,7 +9,8 @@ port.onMessage.addListener(function (msg) {
 		console.log(chrome.runtime.lastError)
 		return
 	}
-	console.log('Received' + msg);
+	console.log('Received Response:');
+	console.log(msg)
 });
 
 port.onDisconnect.addListener(function () {

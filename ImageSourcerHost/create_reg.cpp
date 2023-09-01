@@ -1,16 +1,10 @@
-#include <iostream>
 #include <string>
-#include <cstdio>
 #include <windows.h>
 
 using namespace std;
 
-bool checkRegKey(string handle, string path) {
-	return false;
-}
-
 void setRegKey(HKEY handle, wstring path) {
-	wstring strManPath = L"D:\\CodeProjects\\Chromeext\\ImageSourcer\\ImageSourcerHost\\manifest.json\0"; // Path should be changed to whereever the host manifest.json is
+	const wstring strManPath = L"D:\\CodeProjects\\Chromeext\\ImageSourcer\\ImageSourcerHost\\manifest.json\0"; // Path should be changed to whereever the host manifest.json is
 	HKEY key;
 	RegCreateKeyExW(handle, path.c_str(), 0, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &key, NULL);
 	RegSetValueExW(key, NULL, 0, REG_SZ, (LPBYTE)(strManPath.c_str()), (strManPath.size() + 1) * sizeof(wchar_t));
@@ -23,7 +17,6 @@ int main() {
 	// If changed, this should be also changed within the port connection in the background.js script
 	const wstring regPath = L"SOFTWARE\\Google\\Chrome\\NativeMessagingHosts\\com.toothbrush.imsrc";
 	setRegKey(HKEY_LOCAL_MACHINE, regPath);
-	cout << "Hello World" << endl;
 	return 0;
 }
 
