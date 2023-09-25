@@ -1,6 +1,7 @@
 // Taken from https://stackoverflow.com/questions/26582584/chrome-native-host-in-c-cannot-communicate-with-chrome
 // Probably needs cleanup or something
 
+#include <exiv2/exiv2.hpp>
 #include <exception>
 #include <iostream>
 #include <io.h>
@@ -66,6 +67,15 @@ int main() {
 			// Chrome extension background.js has the json format in message
 			logs << setw(4) << msgJson << endl; // for formatted json
 			logs << msgJson["imgUrl"] << endl;
+			
+			string url = msgJson["hostUrl"];
+			string path = msgJson["imgFilepath"];
+
+			Exiv2::ExifData exifData;
+			exifData["Exif.Photo.UserComment"] = "charset=Unicode " + url ;
+			Exiv2::Image::UniquePtr image = Exiv2::ImageFactory::open(path);
+			image->setExifData(exifData);
+			image->writeMetadata();
 
 			// Instantiate message and length
 			string message;

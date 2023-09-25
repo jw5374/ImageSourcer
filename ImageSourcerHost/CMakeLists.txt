@@ -20,6 +20,8 @@ project(
 	VERSION 1.0
 	LANGUAGES CXX)
 
+find_package(exiv2 CONFIG REQUIRED)
+
 # JW: This adds the binary targets you want the source to build to
 add_executable(imsrc main.cpp)
 add_executable(create_reg_key create_reg.cpp)
@@ -27,5 +29,6 @@ add_executable(create_reg_key create_reg.cpp)
 # JW: Making build static so it can be standalone
 # JW: This is to mitigate the json parsing library issues mentioned
 target_link_libraries(imsrc -static)
+target_link_libraries(imsrc exiv2lib)
 
 target_include_directories(imsrc PUBLIC ${LIBRARY_PATH})

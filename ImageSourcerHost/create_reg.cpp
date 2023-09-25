@@ -4,7 +4,7 @@
 using namespace std;
 
 void setRegKey(HKEY handle, wstring path) {
-	const wstring strManPath = L"D:\\CodeProjects\\Chromeext\\ImageSourcer\\ImageSourcerHost\\manifest.json\0"; // Path should be changed to whereever the host manifest.json is
+	const wstring strManPath = L"C:\\Users\\tlbot\\Desktop\\projects\\ImageSourcer\\ImageSourcerHost\\manifest.json\0"; // Path should be changed to whereever the host manifest.json is
 	HKEY key;
 	RegCreateKeyExW(handle, path.c_str(), 0, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &key, NULL);
 	RegSetValueExW(key, NULL, 0, REG_SZ, (LPBYTE)(strManPath.c_str()), (strManPath.size() + 1) * sizeof(wchar_t));
